@@ -1,4 +1,1156 @@
 # englishgrammarsoccergame
-cd "/Users/ol.sang.2/agent less go"
-git remote set-url origin https://github.com/olsang2/englishgrammarsoccergame.git
-git push -u origin main
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Kick! - Present Perfect Continuous</title>
+    <meta name="description" content="Present Perfect Continuous 문법을 배우는 축구 승부차기 게임">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+            background: #0a1628;
+            user-select: none;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* ===== BACKGROUND ===== */
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(180deg, #0d1f3c 0%, #1a3a2a 40%, #2d7a3a 65%, #3da34a 80%, #4db858 100%);
+        }
+
+        .bg-field {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 45%;
+            background: repeating-linear-gradient(90deg, #3da34a 0px, #3da34a 60px, #45b552 60px, #45b552 120px);
+            z-index: 1;
+        }
+
+        .bg-field::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, transparent 30%);
+        }
+
+        .bg-vignette {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: radial-gradient(ellipse at 50% 60%, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+            pointer-events: none;
+        }
+
+        /* ===== GOAL POST ===== */
+        .goalpost {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(75vw, 600px);
+            height: min(30vh, 220px);
+            z-index: 5;
+            perspective: 800px;
+        }
+
+        .goalpost-frame {
+            position: absolute;
+            inset: 0;
+            border: 8px solid #e8e8e8;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.15), inset 0 0 60px rgba(0, 0, 0, 0.3);
+            background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 20px);
+        }
+
+        .goalpost-net {
+            position: absolute;
+            inset: 8px;
+            top: 8px;
+            background: repeating-linear-gradient(45deg, rgba(200, 200, 200, 0.08) 0px, rgba(200, 200, 200, 0.08) 1px, transparent 1px, transparent 12px),
+                repeating-linear-gradient(-45deg, rgba(200, 200, 200, 0.08) 0px, rgba(200, 200, 200, 0.08) 1px, transparent 1px, transparent 12px);
+        }
+
+        /* ===== GOAL ZONES (6 zones with answers) ===== */
+        .zones-grid {
+            position: absolute;
+            inset: 10px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 4px;
+            z-index: 25;
+        }
+
+        .zone-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(11px, 2vw, 18px);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            padding: 4px;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .zone-btn:hover {
+            background: rgba(59, 130, 246, 0.35);
+            border-color: rgba(59, 130, 246, 0.8);
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .zone-btn.correct-flash {
+            background: rgba(34, 197, 94, 0.6) !important;
+            border-color: #22c55e !important;
+        }
+
+        .zone-btn.wrong-flash {
+            background: rgba(239, 68, 68, 0.5) !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* ===== SCOREBOARD ===== */
+        .scoreboard {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 20px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .score-section {
+            text-align: center;
+            min-width: 55px;
+            padding: 0 10px;
+        }
+
+        .score-label {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .score-label.goal {
+            color: #4ade80;
+        }
+
+        .score-label.save {
+            color: #f87171;
+        }
+
+        .score-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .score-divider {
+            width: 2px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            margin: 0 6px;
+        }
+
+        .round-info {
+            text-align: center;
+            min-width: 60px;
+            padding: 0 10px;
+        }
+
+        .round-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 700;
+        }
+
+        .round-value {
+            font-size: 18px;
+            color: #60a5fa;
+            font-weight: 900;
+        }
+
+        /* ===== QUESTION PANEL ===== */
+        .question-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(10, 22, 40, 0.92) 0%, rgba(10, 22, 40, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px 24px;
+            z-index: 100;
+            text-align: center;
+        }
+
+        .question-unit {
+            font-size: 11px;
+            font-weight: 700;
+            color: #60a5fa;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .question-sentence {
+            font-size: clamp(15px, 3.5vw, 22px);
+            color: #e2e8f0;
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .blank {
+            display: inline-block;
+            min-width: 120px;
+            border-bottom: 3px solid #60a5fa;
+            color: #60a5fa;
+            font-weight: 900;
+            margin: 0 4px;
+            padding: 0 8px;
+            transition: all 0.3s;
+        }
+
+        .blank.filled {
+            color: #4ade80;
+            border-color: #4ade80;
+        }
+
+        .blank.wrong-fill {
+            color: #f87171;
+            border-color: #f87171;
+        }
+
+        .question-hint {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 8px;
+        }
+
+        /* ===== CHARACTERS ===== */
+        .game-area {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .body-part {
+            position: absolute;
+            box-sizing: border-box;
+        }
+
+        .skin {
+            background: radial-gradient(circle at 35% 35%, #fce1c6, #df9b76 70%, #905333);
+        }
+
+        .jersey-gk {
+            background: radial-gradient(circle at top left, #22d322, #0d7f0d 80%, #054005);
+            border-radius: 40% 40% 10% 10%;
+            box-shadow: inset -5px -5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .pants-gk {
+            background: radial-gradient(circle at center, #222, #000);
+            border-radius: 10% 10% 30% 30%;
+        }
+
+        .jersey-kicker {
+            background: radial-gradient(circle at 50% 20%, #eff6ff, #3b82f6 60%, #1e3a8a);
+            border-radius: 40% 40% 5% 5%;
+            box-shadow: inset 0 -10px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .pants-kicker {
+            background: radial-gradient(circle at center, #fff, #ddd);
+            border-radius: 5% 5% 20% 20%;
+        }
+
+        .shoe {
+            background: radial-gradient(circle at 70% 30%, #fff, #555);
+            border-radius: 10px 20px 10px 5px;
+            box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .glove {
+            background: radial-gradient(circle at 30% 30%, #fff, #bbb);
+            border-radius: 50%;
+            box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .joint-shoulder {
+            transform-origin: top center;
+        }
+
+        .joint-elbow {
+            transform-origin: top center;
+        }
+
+        .joint-hip {
+            transform-origin: top center;
+        }
+
+        .joint-knee {
+            transform-origin: top center;
+        }
+
+        #goalkeeper {
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-origin: bottom center;
+        }
+
+        .gk-anim {
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        #kicker {
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.4, 1);
+            transform-origin: bottom center;
+        }
+
+        .kicker-anim {
+            transition: transform 0.15s cubic-bezier(0.2, 0.6, 0.4, 1);
+        }
+
+        #ball {
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 50;
+        }
+
+        /* ===== EFFECTS ===== */
+        .screen-shake {
+            animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-3px, 1px, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(5px, -2px, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-8px, 3px, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(8px, -1px, 0);
+            }
+        }
+
+        @keyframes run-leg {
+            0% {
+                transform: rotateX(0)
+            }
+
+            25% {
+                transform: rotateX(25deg)
+            }
+
+            50% {
+                transform: rotateX(0)
+            }
+
+            75% {
+                transform: rotateX(-25deg)
+            }
+
+            100% {
+                transform: rotateX(0)
+            }
+        }
+
+        @keyframes run-leg-rev {
+            0% {
+                transform: rotateX(0)
+            }
+
+            25% {
+                transform: rotateX(-25deg)
+            }
+
+            50% {
+                transform: rotateX(0)
+            }
+
+            75% {
+                transform: rotateX(25deg)
+            }
+
+            100% {
+                transform: rotateX(0)
+            }
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(96, 165, 250, 0.3)
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(96, 165, 250, 0.6)
+            }
+        }
+
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 90;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .result-overlay.show {
+            opacity: 1;
+        }
+
+        .result-text {
+            font-size: clamp(60px, 15vw, 140px);
+            font-weight: 900;
+            font-style: italic;
+            letter-spacing: -3px;
+            text-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+        }
+
+        .result-text.goal-text {
+            color: #fff;
+            filter: drop-shadow(0 0 30px #22c55e);
+        }
+
+        .result-text.save-text {
+            color: #fff;
+            filter: drop-shadow(0 0 30px #ef4444);
+        }
+
+        .flash-overlay {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 80;
+            transition: opacity 0.3s;
+            mix-blend-mode: overlay;
+        }
+
+        /* ===== START SCREEN ===== */
+        .start-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .start-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1);
+        }
+
+        .start-title {
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+            margin-bottom: 8px;
+            letter-spacing: -2px;
+        }
+
+        .start-subtitle {
+            font-size: clamp(14px, 2.5vw, 20px);
+            color: #94a3b8;
+            margin-bottom: 40px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .start-btn {
+            padding: 16px 48px;
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.6);
+        }
+
+        /* ===== END SCREEN ===== */
+        .end-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .end-screen.show {
+            display: flex;
+        }
+
+        .end-title {
+            font-size: clamp(28px, 6vw, 48px);
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .end-stats {
+            font-size: 18px;
+            color: #94a3b8;
+            margin-bottom: 32px;
+            text-align: center;
+            line-height: 2;
+        }
+
+        .end-stats span {
+            color: #4ade80;
+            font-weight: 900;
+            font-size: 24px;
+        }
+
+        .end-stats .save-stat {
+            color: #f87171;
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <!-- Background -->
+    <div class="bg-layer"></div>
+    <div class="bg-field"></div>
+    <div class="bg-vignette"></div>
+
+    <!-- Start Screen -->
+    <div class="start-screen" id="start-screen">
+        <div class="start-title">⚽ Grammar Kick!</div>
+        <div class="start-subtitle">
+            Present Perfect Continuous 문법을 맞추고 골을 넣어라!<br>
+            Unit 9 & 10 · 총 10라운드
+        </div>
+        <button class="start-btn" onclick="startGame()">KICK OFF!</button>
+    </div>
+
+    <!-- End Screen -->
+    <div class="end-screen" id="end-screen">
+        <div class="end-title" id="end-title">🏆 경기 종료!</div>
+        <div class="end-stats" id="end-stats"></div>
+        <button class="start-btn" onclick="restartGame()">다시 하기</button>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard" id="scoreboard">
+        <div class="score-section">
+            <div class="score-label goal">GOAL</div>
+            <div class="score-value" id="score-goal">0</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-section">
+            <div class="score-label save">SAVE</div>
+            <div class="score-value" id="score-save">0</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="round-info">
+            <div class="round-label">ROUND</div>
+            <div class="round-value" id="round-display">1/10</div>
+        </div>
+    </div>
+
+    <!-- Game Area -->
+    <div class="game-area" id="game-area">
+
+        <!-- Goal Post -->
+        <div class="goalpost" id="goalpost">
+            <div class="goalpost-frame"></div>
+            <div class="goalpost-net"></div>
+            <div class="zones-grid" id="zones-grid"></div>
+        </div>
+
+        <!-- Goalkeeper -->
+        <div id="goalkeeper"
+            style="position:absolute; top:28%; left:50%; transform:translate(-50%, 0%) scale(0.5); width:120px; height:220px; z-index:15; pointer-events:none;">
+            <div class="body-part skin"
+                style="border-radius:100%; width:35px; height:45px; top:0; left:50%; transform:translateX(-50%); box-shadow:0 4px 10px rgba(0,0,0,0.5); z-index:30;">
+                <div
+                    style="position:absolute; top:-2px; left:-2px; width:39px; height:20px; background:#331; border-radius:100% 100% 0 0;">
+                </div>
+            </div>
+            <div class="body-part jersey-gk"
+                style="width:60px; height:85px; top:40px; left:50%; transform:translateX(-50%); z-index:20;"></div>
+            <div id="gk-arm-l" class="body-part joint-shoulder jersey-gk gk-anim"
+                style="width:16px; height:45px; top:45px; left:18px; border-radius:999px; transform:rotate(20deg);">
+                <div id="gk-elbow-l" class="body-part joint-elbow skin gk-anim"
+                    style="width:14px; height:45px; top:35px; left:1px; border-radius:999px; transform:rotate(10deg);">
+                    <div class="body-part glove" style="width:22px; height:26px; top:40px; left:-4px;"></div>
+                </div>
+            </div>
+            <div id="gk-arm-r" class="body-part joint-shoulder jersey-gk gk-anim"
+                style="width:16px; height:45px; top:45px; right:18px; border-radius:999px; transform:rotate(-20deg);">
+                <div id="gk-elbow-r" class="body-part joint-elbow skin gk-anim"
+                    style="width:14px; height:45px; top:35px; right:1px; border-radius:999px; transform:rotate(-10deg);">
+                    <div class="body-part glove" style="width:22px; height:26px; top:40px; right:-4px;"></div>
+                </div>
+            </div>
+            <div class="body-part pants-gk"
+                style="width:55px; height:35px; top:115px; left:50%; transform:translateX(-50%); z-index:20;"></div>
+            <div id="gk-leg-l" class="body-part joint-hip skin gk-anim"
+                style="width:20px; height:50px; top:140px; left:35px; border-radius:999px;">
+                <div id="gk-knee-l" class="body-part joint-knee gk-anim"
+                    style="width:16px; height:55px; top:40px; left:2px; border-radius:999px; background:#fff; box-shadow:inset 0 2px 5px rgba(0,0,0,0.2);">
+                    <div class="body-part shoe" style="width:25px; height:15px; top:50px; left:-5px;"></div>
+                </div>
+            </div>
+            <div id="gk-leg-r" class="body-part joint-hip skin gk-anim"
+                style="width:20px; height:50px; top:140px; right:35px; border-radius:999px;">
+                <div id="gk-knee-r" class="body-part joint-knee gk-anim"
+                    style="width:16px; height:55px; top:40px; right:2px; border-radius:999px; background:#fff; box-shadow:inset 0 2px 5px rgba(0,0,0,0.2);">
+                    <div class="body-part shoe" style="width:25px; height:15px; top:50px; right:-5px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ball -->
+        <div id="ball"
+            style="position:absolute; bottom:18%; left:50%; transform:translateX(-50%); width:50px; height:50px; border-radius:50%; z-index:40; pointer-events:none; background:radial-gradient(circle at 30% 30%, #fff, #aaa); box-shadow:0 12px 25px rgba(0,0,0,0.7);">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg" alt=""
+                style="width:100%;height:100%;opacity:0.9;">
+            <div
+                style="position:absolute; bottom:-4px; left:10%; width:80%; height:8px; background:rgba(0,0,0,0.35); border-radius:50%; filter:blur(2px);">
+            </div>
+        </div>
+
+        <!-- Kicker -->
+        <div id="kicker"
+            style="position:absolute; bottom:2%; left:48%; transform:translateX(-50%) scale(1.3); width:180px; height:320px; z-index:50; pointer-events:none;">
+            <div class="body-part skin"
+                style="border-radius:100%; width:45px; height:55px; top:10px; left:50%; transform:translateX(-50%); box-shadow:0 5px 15px rgba(0,0,0,0.5); z-index:40;">
+                <div
+                    style="position:absolute; inset:0; background:#211; border-radius:100%; box-shadow:inset 0 2px 5px rgba(0,0,0,0.3);">
+                </div>
+            </div>
+            <div id="kicker-body" class="body-part jersey-kicker kicker-anim"
+                style="width:80px; height:110px; top:55px; left:50%; transform:translateX(-50%); z-index:30;">
+                <div
+                    style="position:absolute; top:20px; left:50%; transform:translateX(-50%); color:#fff; font-weight:900; font-size:48px; opacity:0.8; text-shadow:2px 2px 0 #000;">
+                    10</div>
+            </div>
+            <div id="kicker-arm-l" class="body-part joint-shoulder skin kicker-anim"
+                style="width:20px; height:60px; top:60px; left:35px; border-radius:999px; transform:rotate(15deg);">
+                <div style="position:absolute; inset:0; height:50%; border-radius:999px 999px 0 0;"
+                    class="jersey-kicker"></div>
+                <div class="body-part joint-elbow skin"
+                    style="width:18px; height:50px; top:55px; left:1px; border-radius:999px;"></div>
+            </div>
+            <div id="kicker-arm-r" class="body-part joint-shoulder skin kicker-anim"
+                style="width:20px; height:60px; top:60px; right:35px; border-radius:999px; transform:rotate(-15deg);">
+                <div style="position:absolute; inset:0; height:50%; border-radius:999px 999px 0 0;"
+                    class="jersey-kicker"></div>
+                <div class="body-part joint-elbow skin"
+                    style="width:18px; height:50px; top:55px; right:1px; border-radius:999px;"></div>
+            </div>
+            <div class="body-part pants-kicker"
+                style="width:75px; height:50px; top:150px; left:50%; transform:translateX(-50%); z-index:20;"></div>
+            <div id="kicker-leg-l" class="body-part joint-hip skin kicker-anim"
+                style="width:25px; height:70px; top:180px; left:60px; border-radius:999px;">
+                <div class="body-part joint-knee"
+                    style="width:22px; height:80px; top:60px; left:1.5px; background:#fff; border-radius:999px; box-shadow:inset 0 2px 5px rgba(0,0,0,0.2);">
+                    <div class="body-part shoe"
+                        style="width:30px; height:20px; top:75px; left:-4px; background:radial-gradient(circle at 70% 30%,#cbd5e1,#64748b); border-radius:20px 10px 5px 10px;">
+                    </div>
+                </div>
+            </div>
+            <div id="kicker-leg-r" class="body-part joint-hip skin kicker-anim"
+                style="width:25px; height:70px; top:180px; right:60px; border-radius:999px;">
+                <div id="kicker-knee-r" class="body-part joint-knee kicker-anim"
+                    style="width:22px; height:80px; top:60px; right:1.5px; background:#fff; border-radius:999px; box-shadow:inset 0 2px 5px rgba(0,0,0,0.2);">
+                    <div class="body-part shoe"
+                        style="width:30px; height:20px; top:75px; right:-4px; background:radial-gradient(circle at 30% 30%,#cbd5e1,#64748b); border-radius:10px 20px 10px 5px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash -->
+    <div class="flash-overlay" id="flash"></div>
+
+    <!-- Result -->
+    <div class="result-overlay" id="result-overlay">
+        <div class="result-text" id="result-text"></div>
+    </div>
+
+    <!-- Question Panel -->
+    <div class="question-panel" id="question-panel">
+        <div class="question-unit" id="question-unit">UNIT 9 · Present Perfect Continuous</div>
+        <div class="question-sentence" id="question-sentence">
+            골대 구역의 정답을 클릭하여 <span class="blank">______</span> 을 채우세요!
+        </div>
+        <div class="question-hint" id="question-hint">⚽ 정답을 맞추면 골! 틀리면 골키퍼가 세이브합니다.</div>
+    </div>
+
+    <script>
+        // ===== QUESTION DATA: Unit 9 & 10 =====
+        const questions = [
+            // Unit 9: Present Perfect Continuous (I have been doing)
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'I ___ all day. I\'m really tired.',
+                blank: "have been working",
+                distractors: ["have worked", "am working", "was working", "worked"],
+                hint: "하루 종일 ~하는 중이다 (지금까지 계속)"
+            },
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'It ___ for two hours.',
+                blank: "has been raining",
+                distractors: ["has rained", "is raining", "was raining", "rained"],
+                hint: "2시간 동안 계속 비가 오는 중"
+            },
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'How long ___ you ___ here?',
+                blank: "have ... been waiting",
+                distractors: ["did ... wait", "are ... waiting", "have ... waited", "do ... wait"],
+                hint: "얼마나 오래 기다리고 있었는지 묻는 표현"
+            },
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'She ___ tennis since she was eight.',
+                blank: "has been playing",
+                distractors: ["has played", "is playing", "played", "was playing"],
+                hint: "8살 때부터 지금까지 계속 ~하고 있다"
+            },
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'Sorry I\'m late. ___ you ___ long?',
+                blank: "Have ... been waiting",
+                distractors: ["Did ... wait", "Are ... waiting", "Were ... waiting", "Do ... wait"],
+                hint: "오래 기다렸는지 물어보는 현재완료진행형"
+            },
+            // Unit 10: Present Perfect Continuous and Simple
+            {
+                unit: "UNIT 10 · PPC vs Present Perfect Simple",
+                sentence: 'I ___ three cups of coffee today.',
+                blank: "have drunk",
+                distractors: ["have been drinking", "am drinking", "drank", "was drinking"],
+                hint: "완료된 횟수/양 → Present Perfect Simple"
+            },
+            {
+                unit: "UNIT 10 · PPC vs Present Perfect Simple",
+                sentence: 'She\'s out of breath. She ___.',
+                blank: "has been running",
+                distractors: ["has run", "ran", "is running", "was running"],
+                hint: "결과가 눈에 보이는 진행 활동 → Present Perfect Continuous"
+            },
+            {
+                unit: "UNIT 10 · PPC vs Present Perfect Simple",
+                sentence: 'How many pages of that book ___ you ___?',
+                blank: "have ... read",
+                distractors: ["have ... been reading", "did ... read", "are ... reading", "do ... read"],
+                hint: "구체적 양(몇 페이지)을 물을 때 → Simple"
+            },
+            {
+                unit: "UNIT 10 · PPC vs Present Perfect Simple",
+                sentence: 'My hands are dirty. I ___ the car.',
+                blank: "have been fixing",
+                distractors: ["have fixed", "fixed", "am fixing", "was fixing"],
+                hint: "손이 더러운 이유(진행 중인 활동의 흔적) → Continuous"
+            },
+            {
+                unit: "UNIT 10 · PPC vs Present Perfect Simple",
+                sentence: 'Tom ___ five emails this morning.',
+                blank: "has written",
+                distractors: ["has been writing", "wrote", "is writing", "was writing"],
+                hint: "완료된 수량(5통)을 강조 → Simple"
+            },
+            // Extra questions
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'You look tired. ___ you ___ hard?',
+                blank: "Have ... been working",
+                distractors: ["Did ... work", "Do ... work", "Are ... working", "Were ... working"],
+                hint: "피곤해 보이는 이유 → 지금까지 계속 일한 것"
+            },
+            {
+                unit: "UNIT 10 · PPC vs Present Perfect Simple",
+                sentence: 'I ___ this book. You can have it now.',
+                blank: "have finished",
+                distractors: ["have been finishing", "finished", "am finishing", "was finishing"],
+                hint: "완전히 끝난 행위 → Simple"
+            },
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'They ___ in that house since 2010.',
+                blank: "have been living",
+                distractors: ["lived", "are living", "were living", "live"],
+                hint: "2010년부터 계속 살고 있는 중"
+            },
+            {
+                unit: "UNIT 10 · PPC vs Present Perfect Simple",
+                sentence: 'She ___ four countries so far this year.',
+                blank: "has visited",
+                distractors: ["has been visiting", "visited", "is visiting", "was visiting"],
+                hint: "구체적 수(4개국)를 완료 → Simple"
+            },
+            {
+                unit: "UNIT 9 · Present Perfect Continuous",
+                sentence: 'Why are your clothes so dirty? What ___?',
+                blank: "have you been doing",
+                distractors: ["did you do", "are you doing", "you have done", "do you do"],
+                hint: "옷이 더러운 이유를 묻는 현재완료진행형"
+            }
+        ];
+
+        // ===== GAME STATE =====
+        let isShooting = false;
+        let scoreGoal = 0, scoreSave = 0;
+        let currentRound = 0;
+        const totalRounds = 10;
+        let gameQuestions = [];
+
+        // ===== DOM =====
+        const ball = document.getElementById('ball');
+        const goalkeeper = document.getElementById('goalkeeper');
+        const kicker = document.getElementById('kicker');
+        const kickerBody = document.getElementById('kicker-body');
+        const kickerLegL = document.getElementById('kicker-leg-l');
+        const kickerLegR = document.getElementById('kicker-leg-r');
+        const kickerKneeR = document.getElementById('kicker-knee-r');
+        const kickerArmL = document.getElementById('kicker-arm-l');
+        const kickerArmR = document.getElementById('kicker-arm-r');
+        const gkArmL = document.getElementById('gk-arm-l');
+        const gkArmR = document.getElementById('gk-arm-r');
+        const gkLegL = document.getElementById('gk-leg-l');
+        const gkLegR = document.getElementById('gk-leg-r');
+        const gkKneeL = document.getElementById('gk-knee-l');
+        const gkKneeR = document.getElementById('gk-knee-r');
+        const gameArea = document.getElementById('game-area');
+        const flash = document.getElementById('flash');
+        const bodyContainer = document.getElementById('body-container');
+        const resultOverlay = document.getElementById('result-overlay');
+        const resultText = document.getElementById('result-text');
+        const zonesGrid = document.getElementById('zones-grid');
+
+        // GK idle breathing
+        setInterval(() => {
+            if (!isShooting) {
+                const y = Math.sin(Date.now() / 500) * 3;
+                goalkeeper.style.transform = `translate(-50%, ${y}px) scale(0.5)`;
+            }
+        }, 50);
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            scoreGoal = 0; scoreSave = 0; currentRound = 0;
+            document.getElementById('score-goal').textContent = '0';
+            document.getElementById('score-save').textContent = '0';
+            gameQuestions = shuffle(questions).slice(0, totalRounds);
+            loadQuestion();
+        }
+
+        function restartGame() {
+            document.getElementById('end-screen').classList.remove('show');
+            scoreGoal = 0; scoreSave = 0; currentRound = 0;
+            document.getElementById('score-goal').textContent = '0';
+            document.getElementById('score-save').textContent = '0';
+            gameQuestions = shuffle(questions).slice(0, totalRounds);
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentRound >= totalRounds) { endGame(); return; }
+            const q = gameQuestions[currentRound];
+            document.getElementById('round-display').textContent = `${currentRound + 1}/${totalRounds}`;
+            document.getElementById('question-unit').textContent = q.unit;
+
+            // Build sentence with blank
+            const parts = q.sentence.split('___');
+            let html = '';
+            for (let i = 0; i < parts.length; i++) {
+                html += parts[i];
+                if (i < parts.length - 1) html += '<span class="blank" id="blank-slot">______</span>';
+            }
+            document.getElementById('question-sentence').innerHTML = html;
+            document.getElementById('question-hint').textContent = '💡 ' + q.hint;
+
+            // Build zone answers
+            const allOptions = shuffle([q.blank, ...q.distractors.slice(0, 5)]);
+            // Ensure exactly 6 options
+            while (allOptions.length < 6) allOptions.push(q.distractors[allOptions.length - 1] || "---");
+            const sixOptions = allOptions.slice(0, 6);
+
+            zonesGrid.innerHTML = '';
+            sixOptions.forEach((opt, i) => {
+                const btn = document.createElement('div');
+                btn.className = 'zone-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleAnswer(i, opt, q.blank);
+                zonesGrid.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(zoneIdx, selected, correct) {
+            if (isShooting) return;
+            isShooting = true;
+            const isCorrect = selected === correct;
+
+            // Highlight correct/wrong
+            const btns = zonesGrid.querySelectorAll('.zone-btn');
+            btns.forEach(b => { b.style.pointerEvents = 'none'; });
+            btns[zoneIdx].classList.add(isCorrect ? 'correct-flash' : 'wrong-flash');
+            if (!isCorrect) {
+                btns.forEach(b => { if (b.textContent === correct) b.classList.add('correct-flash'); });
+            }
+
+            // Fill blank
+            const blankEl = document.getElementById('blank-slot');
+            if (blankEl) {
+                blankEl.textContent = isCorrect ? correct : selected;
+                blankEl.classList.add(isCorrect ? 'filled' : 'wrong-fill');
+            }
+
+            // Run-up animation
+            kickerLegL.style.animation = 'run-leg 0.3s infinite';
+            kickerLegR.style.animation = 'run-leg-rev 0.3s infinite';
+            const sc = window.innerWidth > 640 ? 1.5 : 1.3;
+            kicker.style.transform = `translateX(-50%) translateY(-40px) scale(${sc})`;
+
+            setTimeout(() => {
+                kickerLegL.style.animation = 'none';
+                kickerLegR.style.animation = 'none';
+                kickerLegL.style.transform = 'rotateX(0)';
+
+                // Backswing
+                kickerBody.style.transform = 'translateX(-50%) rotateX(10deg)';
+                kickerArmL.style.transform = 'rotate(-20deg) rotateX(40deg)';
+                kickerArmR.style.transform = 'rotate(20deg) rotateX(-40deg)';
+                kickerLegR.style.transform = 'rotateX(-50deg)';
+                kickerKneeR.style.transform = 'rotateX(-60deg)';
+
+                setTimeout(() => {
+                    // Full swing
+                    kickerBody.style.transform = 'translateX(-50%) rotateX(-10deg)';
+                    kickerLegR.style.transform = 'rotateX(55deg)';
+                    kickerKneeR.style.transform = 'rotateX(5deg)';
+
+                    fireBall(zoneIdx, isCorrect);
+
+                    setTimeout(() => {
+                        kickerBody.style.transform = 'translateX(-50%) rotateX(0)';
+                        kickerLegR.style.transform = 'rotateX(0)';
+                        kickerKneeR.style.transform = 'rotateX(0)';
+                    }, 400);
+                }, 180);
+            }, 350);
+        }
+
+        function fireBall(userZone, isGoal) {
+            const zones = zonesGrid.querySelectorAll('.zone-btn');
+            const target = zones[userZone];
+            const tRect = target.getBoundingClientRect();
+            const aRect = gameArea.getBoundingClientRect();
+
+            const bx = tRect.left - aRect.left + tRect.width / 2;
+            const by = tRect.top - aRect.top + tRect.height / 2;
+            const sx = aRect.width / 2;
+            const sy = aRect.height * 0.82;
+            const dx = bx - sx, dy = by - sy;
+
+            // Ball fly
+            ball.style.transform = `translateX(calc(-50% + ${dx}px)) translateY(${dy}px) scale(0.35) rotate(${Math.random() * 1440 + 720}deg)`;
+
+            // Goalkeeper dive
+            let gkX = 0, gkY = 0, gkRot = 0;
+            let aL = 20, aR = -20, lL = 0, lR = 0, kL = 0, kR = 0;
+
+            if (!isGoal) {
+                // Dive to the zone where ball goes
+                const diveMap = [
+                    { x: -100, y: -90, r: -55, aL: 140, aR: 90, lL: 30, lR: 60, kR: -40 },
+                    { x: 0, y: -140, r: 0, aL: 160, aR: -160, lL: -20, lR: 20, kL: 10, kR: 10 },
+                    { x: 100, y: -90, r: 55, aL: -90, aR: -140, lL: -60, lR: -30, kL: 40 },
+                    { x: -110, y: 40, r: -80, aL: 110, aR: 10, lL: 20, lR: 80, kR: -70 },
+                    { x: 0, y: 40, r: 0, aL: 20, aR: -20, lL: -40, lR: 40, kL: 90, kR: 90 },
+                    { x: 110, y: 40, r: 80, aL: -10, aR: -110, lL: -80, lR: -20, kL: 70 }
+                ];
+                const d = diveMap[userZone] || diveMap[0];
+                gkX = d.x; gkY = d.y; gkRot = d.r; aL = d.aL; aR = d.aR; lL = d.lL; lR = d.lR; kL = d.kL || 0; kR = d.kR || 0;
+            } else {
+                // Dive wrong direction
+                const wrongZones = [0, 1, 2, 3, 4, 5].filter(z => z !== userZone);
+                const wz = wrongZones[Math.floor(Math.random() * wrongZones.length)];
+                const diveMap = [
+                    { x: -100, y: -90, r: -55, aL: 140, aR: 90, lL: 30, lR: 60, kR: -40 },
+                    { x: 0, y: -140, r: 0, aL: 160, aR: -160, lL: -20, lR: 20, kL: 10, kR: 10 },
+                    { x: 100, y: -90, r: 55, aL: -90, aR: -140, lL: -60, lR: -30, kL: 40 },
+                    { x: -110, y: 40, r: -80, aL: 110, aR: 10, lL: 20, lR: 80, kR: -70 },
+                    { x: 0, y: 40, r: 0, aL: 20, aR: -20, lL: -40, lR: 40, kL: 90, kR: 90 },
+                    { x: 110, y: 40, r: 80, aL: -10, aR: -110, lL: -80, lR: -20, kL: 70 }
+                ];
+                const d = diveMap[wz];
+                gkX = d.x; gkY = d.y; gkRot = d.r; aL = d.aL; aR = d.aR; lL = d.lL; lR = d.lR; kL = d.kL || 0; kR = d.kR || 0;
+            }
+
+            goalkeeper.style.transform = `translate(calc(-50% + ${gkX}px), ${gkY}px) rotate(${gkRot}deg) scale(0.5)`;
+            gkArmL.style.transform = `rotate(${aL}deg)`;
+            gkArmR.style.transform = `rotate(${aR}deg)`;
+            gkLegL.style.transform = `rotate(${lL}deg)`;
+            gkLegR.style.transform = `rotate(${lR}deg)`;
+            gkKneeL.style.transform = `rotate(${kL}deg)`;
+            gkKneeR.style.transform = `rotate(${kR}deg)`;
+
+            setTimeout(() => {
+                if (isGoal) {
+                    bodyContainer.classList.add('screen-shake');
+                    flash.style.opacity = '0.3';
+                    resultText.textContent = 'GOAL!!';
+                    resultText.className = 'result-text goal-text';
+                    resultOverlay.classList.add('show');
+                    scoreGoal++;
+                    document.getElementById('score-goal').textContent = scoreGoal;
+                    setTimeout(() => { bodyContainer.classList.remove('screen-shake'); flash.style.opacity = '0'; }, 500);
+                    setTimeout(() => {
+                        ball.style.transition = 'transform 0.4s ease-in';
+                        ball.style.transform = `translateX(calc(-50% + ${dx}px)) translateY(${dy + 100}px) scale(0.35)`;
+                    }, 100);
+                } else {
+                    resultText.textContent = 'SAVED!';
+                    resultText.className = 'result-text save-text';
+                    resultOverlay.classList.add('show');
+                    scoreSave++;
+                    document.getElementById('score-save').textContent = scoreSave;
+                    const rx = (Math.random() - 0.5) * 400;
+                    ball.style.transition = 'transform 0.8s cubic-bezier(0.1,0.8,0.3,1)';
+                    ball.style.transform = `translateX(calc(-50% + ${dx + rx}px)) translateY(${dy - 200}px) scale(0.5) rotate(${Math.random() * 2000}deg)`;
+                }
+                currentRound++;
+                setTimeout(resetRound, 2500);
+            }, 500);
+        }
+
+        function resetRound() {
+            ball.style.transition = 'none';
+            ball.style.transform = 'translateX(-50%) scale(1) rotate(0)';
+            setTimeout(() => { ball.style.transition = 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)'; }, 50);
+
+            goalkeeper.style.transform = 'translate(-50%, 0) scale(0.5)';
+            gkArmL.style.transform = 'rotate(20deg)'; gkArmR.style.transform = 'rotate(-20deg)';
+            gkLegL.style.transform = 'rotate(0)'; gkLegR.style.transform = 'rotate(0)';
+            gkKneeL.style.transform = 'rotate(0)'; gkKneeR.style.transform = 'rotate(0)';
+
+            const sc = window.innerWidth > 640 ? 1.5 : 1.3;
+            kicker.style.transform = `translateX(-50%) scale(${sc})`;
+            kickerBody.style.transform = 'translateX(-50%) rotateX(0)';
+            kickerLegL.style.transform = 'rotateX(0)'; kickerLegR.style.transform = 'rotateX(0)';
+            kickerKneeR.style.transform = 'rotateX(0)';
+            kickerArmL.style.transform = 'rotate(15deg)'; kickerArmR.style.transform = 'rotate(-15deg)';
+
+            resultOverlay.classList.remove('show');
+            isShooting = false;
+            loadQuestion();
+        }
+
+        function endGame() {
+            const endScreen = document.getElementById('end-screen');
+            const pct = Math.round((scoreGoal / totalRounds) * 100);
+            let emoji = pct >= 80 ? '🏆' : pct >= 50 ? '⚽' : '😅';
+            document.getElementById('end-title').textContent = `${emoji} 경기 종료!`;
+            document.getElementById('end-stats').innerHTML =
+                `골: <span>${scoreGoal}</span> / 세이브: <span class="save-stat">${scoreSave}</span><br>
+         정답률: <span>${pct}%</span><br><br>
+         ${pct >= 80 ? '문법 마스터! 👏' : pct >= 50 ? '잘했어요! 다시 도전해보세요!' : '더 연습이 필요해요! 화이팅! 💪'}`;
+            endScreen.classList.add('show');
+        }
+    </script>
+</body>
+
+</html>
