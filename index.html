@@ -32,7 +32,7 @@
             position: absolute;
             inset: 0;
             z-index: 0;
-            background: linear-gradient(180deg, #0d1f3c 0%, #1a3a2a 40%, #2d7a3a 65%, #3da34a 80%, #4db858 100%);
+            background: linear-gradient(180deg, #0d1f3c 0%, #1a3a2a 25%, #2d7a3a 40%, #3da34a 55%, #4db858 100%);
         }
 
         .bg-field {
@@ -40,8 +40,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 45%;
-            background: repeating-linear-gradient(90deg, #3da34a 0px, #3da34a 60px, #45b552 60px, #45b552 120px);
+            height: 72%;
+            background: repeating-linear-gradient(180deg, #3da34a 0px, #3da34a 50px, #45b552 50px, #45b552 100px);
             z-index: 1;
         }
 
@@ -49,7 +49,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, transparent 30%);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 20%);
         }
 
         .bg-vignette {
@@ -106,37 +106,50 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(4px);
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 58, 95, 0.8));
+            border: 2px solid rgba(96, 165, 250, 0.35);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(11px, 2vw, 18px);
+            font-size: clamp(12px, 2.2vw, 17px);
             font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-            padding: 4px;
+            color: #e2e8f0;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+            padding: 6px 8px;
             text-align: center;
             word-break: break-word;
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            will-change: transform, opacity;
         }
 
         .zone-btn:hover {
-            background: rgba(59, 130, 246, 0.35);
-            border-color: rgba(59, 130, 246, 0.8);
-            transform: scale(1.03);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(37, 99, 235, 0.35));
+            border-color: rgba(96, 165, 250, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.35), 0 8px 20px rgba(0, 0, 0, 0.3);
+            color: #fff;
+        }
+
+        .zone-btn:active {
+            transform: scale(0.97);
         }
 
         .zone-btn.correct-flash {
-            background: rgba(34, 197, 94, 0.6) !important;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.6), rgba(22, 163, 74, 0.5)) !important;
             border-color: #22c55e !important;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4) !important;
+            color: #fff !important;
         }
 
         .zone-btn.wrong-flash {
-            background: rgba(239, 68, 68, 0.5) !important;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.5), rgba(220, 38, 38, 0.45)) !important;
             border-color: #ef4444 !important;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.35) !important;
+            color: #fff !important;
         }
 
         /* ===== SCOREBOARD ===== */
@@ -217,58 +230,92 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(180deg, rgba(10, 22, 40, 0.92) 0%, rgba(10, 22, 40, 0.98) 100%);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 16px 20px 24px;
+            background: linear-gradient(180deg, rgba(8, 15, 30, 0.92) 0%, rgba(12, 20, 40, 0.98) 100%);
+            border-top: 2px solid transparent;
+            border-image: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.5), rgba(139, 92, 246, 0.5), transparent) 1;
+            padding: 10px 24px 14px;
             z-index: 100;
             text-align: center;
         }
 
+        .question-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.3), rgba(139, 92, 246, 0.3), transparent);
+            filter: blur(1px);
+        }
+
         .question-unit {
-            font-size: 11px;
-            font-weight: 700;
-            color: #60a5fa;
-            letter-spacing: 2px;
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 800;
+            color: rgba(96, 165, 250, 0.9);
+            letter-spacing: 2.5px;
             margin-bottom: 6px;
             text-transform: uppercase;
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 20px;
+            padding: 4px 14px;
         }
 
         .question-sentence {
-            font-size: clamp(15px, 3.5vw, 22px);
-            color: #e2e8f0;
+            font-size: clamp(13px, 3vw, 18px);
+            color: #f1f5f9;
             font-weight: 400;
             line-height: 1.6;
-            max-width: 700px;
+            max-width: 720px;
             margin: 0 auto;
+            letter-spacing: 0.3px;
         }
 
         .blank {
             display: inline-block;
-            min-width: 120px;
+            min-width: 130px;
             border-bottom: 3px solid #60a5fa;
-            color: #60a5fa;
+            color: transparent;
             font-weight: 900;
-            margin: 0 4px;
-            padding: 0 8px;
-            transition: all 0.3s;
+            font-size: inherit;
+            margin: 0 6px;
+            padding: 0 12px 6px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(96, 165, 250, 0.08);
+            border-radius: 4px 4px 0 0;
+            vertical-align: baseline;
+            line-height: 1.6;
+            animation: pulse-blank 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-blank {
+
+            0%,
+            100% {
+                border-color: #60a5fa;
+            }
+
+            50% {
+                border-color: #93c5fd;
+            }
         }
 
         .blank.filled {
             color: #4ade80;
             border-color: #4ade80;
+            background: rgba(34, 197, 94, 0.1);
+            animation: none;
         }
 
         .blank.wrong-fill {
             color: #f87171;
             border-color: #f87171;
+            background: rgba(239, 68, 68, 0.1);
+            animation: none;
         }
 
-        .question-hint {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 8px;
-        }
 
         /* ===== CHARACTERS ===== */
         .game-area {
@@ -338,8 +385,14 @@
         }
 
         #goalkeeper {
-            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
             transform-origin: bottom center;
+            opacity: 0.3;
+            will-change: transform, opacity;
+        }
+
+        #goalkeeper.gk-visible {
+            opacity: 1;
         }
 
         .gk-anim {
@@ -349,6 +402,7 @@
         #kicker {
             transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.4, 1);
             transform-origin: bottom center;
+            will-change: transform;
         }
 
         .kicker-anim {
@@ -358,6 +412,7 @@
         #ball {
             transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 50;
+            will-change: transform;
         }
 
         /* ===== EFFECTS ===== */
@@ -647,7 +702,7 @@
 
         <!-- Goalkeeper -->
         <div id="goalkeeper"
-            style="position:absolute; top:28%; left:50%; transform:translate(-50%, 0%) scale(0.5); width:120px; height:220px; z-index:15; pointer-events:none;">
+            style="position:absolute; top:15%; left:50%; transform:translate(-50%, 0%) scale(0.55); width:120px; height:220px; z-index:15; pointer-events:none;">
             <div class="body-part skin"
                 style="border-radius:100%; width:35px; height:45px; top:0; left:50%; transform:translateX(-50%); box-shadow:0 4px 10px rgba(0,0,0,0.5); z-index:30;">
                 <div
@@ -700,7 +755,7 @@
 
         <!-- Kicker -->
         <div id="kicker"
-            style="position:absolute; bottom:2%; left:48%; transform:translateX(-50%) scale(1.3); width:180px; height:320px; z-index:50; pointer-events:none;">
+            style="position:absolute; bottom:2%; left:48%; transform:translateX(-50%) scale(1.05); width:180px; height:320px; z-index:50; pointer-events:none;">
             <div class="body-part skin"
                 style="border-radius:100%; width:45px; height:55px; top:10px; left:50%; transform:translateX(-50%); box-shadow:0 5px 15px rgba(0,0,0,0.5); z-index:40;">
                 <div
@@ -711,7 +766,7 @@
                 style="width:80px; height:110px; top:55px; left:50%; transform:translateX(-50%); z-index:30;">
                 <div
                     style="position:absolute; top:20px; left:50%; transform:translateX(-50%); color:#fff; font-weight:900; font-size:48px; opacity:0.8; text-shadow:2px 2px 0 #000;">
-                    10</div>
+                    7</div>
             </div>
             <div id="kicker-arm-l" class="body-part joint-shoulder skin kicker-anim"
                 style="width:20px; height:60px; top:60px; left:35px; border-radius:999px; transform:rotate(15deg);">
@@ -764,7 +819,6 @@
         <div class="question-sentence" id="question-sentence">
             골대 구역의 정답을 클릭하여 <span class="blank">______</span> 을 채우세요!
         </div>
-        <div class="question-hint" id="question-hint">⚽ 정답을 맞추면 골! 틀리면 골키퍼가 세이브합니다.</div>
     </div>
 
     <script>
@@ -910,13 +964,16 @@
         const resultText = document.getElementById('result-text');
         const zonesGrid = document.getElementById('zones-grid');
 
-        // GK idle breathing
-        setInterval(() => {
+        // GK idle breathing - requestAnimationFrame for smooth performance
+        let gkAnimId;
+        function animateGK(ts) {
             if (!isShooting) {
-                const y = Math.sin(Date.now() / 500) * 3;
-                goalkeeper.style.transform = `translate(-50%, ${y}px) scale(0.5)`;
+                const y = Math.sin(ts / 500) * 3;
+                goalkeeper.style.transform = `translate(-50%, ${y}px) scale(0.55)`;
             }
-        }, 50);
+            gkAnimId = requestAnimationFrame(animateGK);
+        }
+        gkAnimId = requestAnimationFrame(animateGK);
 
         function shuffle(arr) {
             const a = [...arr];
@@ -945,6 +1002,12 @@
             loadQuestion();
         }
 
+        // 라운드 1~5 정답 위치 고정
+        // 사용자 번호: 1=좌상, 2=좌하, 3=중상, 4=중하, 5=우상, 6=우하
+        // DOM 인덱스: 0=좌상, 1=중상, 2=우상, 3=좌하, 4=중하, 5=우하
+        // 요청: 1,3,6,3,5번 → DOM 인덱스: 0,1,5,1,2
+        const fixedAnswerPositions = [0, 1, 5, 1, 2];
+
         function loadQuestion() {
             if (currentRound >= totalRounds) { endGame(); return; }
             const q = gameQuestions[currentRound];
@@ -954,18 +1017,42 @@
             // Build sentence with blank
             const parts = q.sentence.split('___');
             let html = '';
+            let blankCount = 0;
             for (let i = 0; i < parts.length; i++) {
                 html += parts[i];
-                if (i < parts.length - 1) html += '<span class="blank" id="blank-slot">______</span>';
+                if (i < parts.length - 1) {
+                    html += `<span class="blank" id="blank-slot-${blankCount}">______</span>`;
+                    blankCount++;
+                }
             }
             document.getElementById('question-sentence').innerHTML = html;
-            document.getElementById('question-hint').textContent = '💡 ' + q.hint;
+
+            // 골키퍼 투명하게, 답 버튼 선명하게
+            goalkeeper.classList.remove('gk-visible');
 
             // Build zone answers
-            const allOptions = shuffle([q.blank, ...q.distractors.slice(0, 5)]);
-            // Ensure exactly 6 options
-            while (allOptions.length < 6) allOptions.push(q.distractors[allOptions.length - 1] || "---");
-            const sixOptions = allOptions.slice(0, 6);
+            const distractors = shuffle(q.distractors.slice(0, 5));
+            let sixOptions;
+
+            if (currentRound < 5) {
+                // 라운드 1~5: 정답 위치 고정
+                const correctPos = fixedAnswerPositions[currentRound];
+                sixOptions = [];
+                let dIdx = 0;
+                for (let i = 0; i < 6; i++) {
+                    if (i === correctPos) {
+                        sixOptions.push(q.blank);
+                    } else {
+                        sixOptions.push(distractors[dIdx] || '---');
+                        dIdx++;
+                    }
+                }
+            } else {
+                // 라운드 6~10: 랜덤 배치
+                const allOptions = shuffle([q.blank, ...distractors]);
+                while (allOptions.length < 6) allOptions.push(distractors[allOptions.length - 1] || '---');
+                sixOptions = allOptions.slice(0, 6);
+            }
 
             zonesGrid.innerHTML = '';
             sixOptions.forEach((opt, i) => {
@@ -982,25 +1069,42 @@
             isShooting = true;
             const isCorrect = selected === correct;
 
+            // 골키퍼 선명하게, 답 버튼 반투명하게
+            goalkeeper.classList.add('gk-visible');
+
             // Highlight correct/wrong
             const btns = zonesGrid.querySelectorAll('.zone-btn');
-            btns.forEach(b => { b.style.pointerEvents = 'none'; });
+            btns.forEach(b => { b.style.pointerEvents = 'none'; b.style.opacity = '0.35'; });
+            btns[zoneIdx].style.opacity = '1';
             btns[zoneIdx].classList.add(isCorrect ? 'correct-flash' : 'wrong-flash');
             if (!isCorrect) {
-                btns.forEach(b => { if (b.textContent === correct) b.classList.add('correct-flash'); });
+                btns.forEach(b => { if (b.textContent === correct) { b.classList.add('correct-flash'); b.style.opacity = '1'; } });
             }
 
-            // Fill blank
-            const blankEl = document.getElementById('blank-slot');
-            if (blankEl) {
-                blankEl.textContent = isCorrect ? correct : selected;
-                blankEl.classList.add(isCorrect ? 'filled' : 'wrong-fill');
+            // Fill blank(s)
+            const answerText = isCorrect ? correct : selected;
+            if (answerText.includes(' ... ')) {
+                // 두 개의 빈칸에 분리하여 채우기 (예: "have ... been waiting")
+                const answerParts = answerText.split(' ... ');
+                for (let bi = 0; bi < answerParts.length; bi++) {
+                    const blankEl = document.getElementById(`blank-slot-${bi}`);
+                    if (blankEl) {
+                        blankEl.textContent = answerParts[bi];
+                        blankEl.classList.add(isCorrect ? 'filled' : 'wrong-fill');
+                    }
+                }
+            } else {
+                const blankEl = document.getElementById('blank-slot-0');
+                if (blankEl) {
+                    blankEl.textContent = answerText;
+                    blankEl.classList.add(isCorrect ? 'filled' : 'wrong-fill');
+                }
             }
 
             // Run-up animation
             kickerLegL.style.animation = 'run-leg 0.3s infinite';
             kickerLegR.style.animation = 'run-leg-rev 0.3s infinite';
-            const sc = window.innerWidth > 640 ? 1.5 : 1.3;
+            const sc = window.innerWidth > 640 ? 1.2 : 1.05;
             kicker.style.transform = `translateX(-50%) translateY(-40px) scale(${sc})`;
 
             setTimeout(() => {
@@ -1079,7 +1183,7 @@
                 gkX = d.x; gkY = d.y; gkRot = d.r; aL = d.aL; aR = d.aR; lL = d.lL; lR = d.lR; kL = d.kL || 0; kR = d.kR || 0;
             }
 
-            goalkeeper.style.transform = `translate(calc(-50% + ${gkX}px), ${gkY}px) rotate(${gkRot}deg) scale(0.5)`;
+            goalkeeper.style.transform = `translate(calc(-50% + ${gkX}px), ${gkY}px) rotate(${gkRot}deg) scale(0.55)`;
             gkArmL.style.transform = `rotate(${aL}deg)`;
             gkArmR.style.transform = `rotate(${aR}deg)`;
             gkLegL.style.transform = `rotate(${lL}deg)`;
@@ -1121,7 +1225,7 @@
             ball.style.transform = 'translateX(-50%) scale(1) rotate(0)';
             setTimeout(() => { ball.style.transition = 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)'; }, 50);
 
-            goalkeeper.style.transform = 'translate(-50%, 0) scale(0.5)';
+            goalkeeper.style.transform = 'translate(-50%, 0) scale(0.55)';
             gkArmL.style.transform = 'rotate(20deg)'; gkArmR.style.transform = 'rotate(-20deg)';
             gkLegL.style.transform = 'rotate(0)'; gkLegR.style.transform = 'rotate(0)';
             gkKneeL.style.transform = 'rotate(0)'; gkKneeR.style.transform = 'rotate(0)';
